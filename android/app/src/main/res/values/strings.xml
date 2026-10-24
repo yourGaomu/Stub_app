@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Stub 短链</string>
+    <string name="title_activity_main">Stub 短链</string>
+    <string name="package_name">wiki.mikasa.stub.app</string>
+    <string name="custom_url_scheme">wiki.mikasa.stub.app</string>
+</resources>
