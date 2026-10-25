@@ -202,9 +202,9 @@ export function LinksTab({
         </div>
       )}
 
-      {/* 3-Column Mini Usage */}
+      {/* Mini Usage Cards */}
       {usage && (
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
           <div className="p-2 rounded-sm border border-[var(--line)] bg-[var(--bg-elev)]">
             <div className="text-[10px] font-mono text-[var(--ink-3)]">URL 短链配额</div>
             <div className="text-sm font-extrabold font-mono mt-0.5">
@@ -227,6 +227,15 @@ export function LinksTab({
             <div className="text-[10px] font-mono text-[var(--ink-3)]">存储空间</div>
             <div className="text-sm font-extrabold font-mono mt-0.5 truncate">
               {formatBytes(usage.storage.usedBytes)}
+            </div>
+          </div>
+          <div className="p-2 rounded-sm border border-[var(--line)] bg-[var(--bg-elev)]">
+            <div className="text-[10px] font-mono text-[var(--ink-3)]">API Key 凭证</div>
+            <div className="text-sm font-extrabold font-mono mt-0.5">
+              {usage.apiKeys?.used ?? 0}{" "}
+              <span className="text-[10px] font-normal text-[var(--ink-3)]">
+                / {usage.apiKeys?.limit ?? "∞"}
+              </span>
             </div>
           </div>
         </div>

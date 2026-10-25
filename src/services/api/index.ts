@@ -2,6 +2,7 @@ import { CapacitorHttp } from "@capacitor/core";
 import { getServerBaseURL } from "@/lib/format";
 import { CLIENT_APP_ID, getStoredToken, request } from "./client";
 import type {
+  APIKeyDTO,
   AccessEvent,
   AdminUserItem,
   AnalyticsResponse,
@@ -9,6 +10,8 @@ import type {
   AuditEvent,
   BusinessDTO,
   BusinessItem,
+  CreateAPIKeyRequest,
+  CreateAPIKeyResponse,
   CreateLinkRequest,
   EmailCodeRequest,
   EmailCodeResponse,
@@ -41,6 +44,7 @@ import type {
   TemplateVersionListItem,
   TemplateVersionRequest,
   UnknownShortCodeEvent,
+  UpdateAPIKeyRequest,
   UsageResponse,
   User,
   UserBusinessItem,
@@ -412,5 +416,47 @@ export const adminApi = {
   }) =>
     request<PageResponse<UnknownShortCodeEvent>>("/admin/security-events/unknown-short-codes", {
       query: params,
+    }),
+
+  listUserAPIKeys: (userId: string, params?: { status?: string; page?: number; pageSize?: number }) =>
+    request<PageResponse<APIKeyDTO>>(`/admin/users/${encodeURIComponent(userId)}/api-keys`, {
+      query: params,
+    }),
+
+  revokeAPIKey: (apiKeyId: string) =>
+    request<void>(`/admin/api-keys/${encodeURIComponent(apiKeyId)}/revoke`, {
+      method: "POST",
+    }),
+};
+
+export const apiKeysApi = {
+  list: (params?: { status?: string; page?: number; pageSize?: number }) =>
+    request<PageResponse<APIKeyDTO>>("/api-keys", { query: params }),
+
+  create: (body: CreateAPIKeyRequest) =>
+    request<CreateAPIKeyResponse>("/api-keys", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  update: (apiKeyId: string, body: UpdateAPIKeyRequest) =>
+    request<APIKeyDTO>(`/api-keys/${encodeURIComponent(apiKeyId)}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  disable: (apiKeyId: string) =>
+    request<APIKeyDTO>(`/api-keys/${encodeURIComponent(apiKeyId)}/disable`, {
+      method: "POST",
+    }),
+
+  enable: (apiKeyId: string) =>
+    request<APIKeyDTO>(`/api-keys/${encodeURIComponent(apiKeyId)}/enable`, {
+      method: "POST",
+    }),
+
+  revoke: (apiKeyId: string) =>
+    request<APIKeyDTO>(`/api-keys/${encodeURIComponent(apiKeyId)}/revoke`, {
+      method: "POST",
     }),
 };

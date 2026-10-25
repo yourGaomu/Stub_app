@@ -130,6 +130,11 @@ export interface UsageResponse {
     limit: number | null;
     remaining: number | null;
   };
+  apiKeys?: {
+    used: number;
+    limit: number | null;
+    remaining: number | null;
+  };
 }
 
 export interface InviteDTO {
@@ -430,6 +435,8 @@ export interface AdminUserItem {
   urlLinkUsed: number;
   minioAssetLinkQuota: number;
   minioAssetLinkUsed: number;
+  apiKeyQuota: number;
+  apiKeyUsed: number;
   enabledPermissionCount: number;
   businessAccessCount: number;
 }
@@ -442,6 +449,8 @@ export interface Quotas {
   urlLinkUsed: number;
   minioAssetLinkQuota: number | null;
   minioAssetLinkUsed: number;
+  apiKeyQuota: number | null;
+  apiKeyUsed: number;
 }
 
 export interface QuotaPatch {
@@ -449,4 +458,74 @@ export interface QuotaPatch {
   storageQuotaBytes?: number;
   urlLinkQuota?: number;
   minioAssetLinkQuota?: number;
+  apiKeyQuota?: number;
+}
+
+export type APIKeyStatus = "active" | "disabled" | "revoked";
+
+export interface APIKeyQuota {
+  maxUploadBytes: number | null;
+  uploadedBytesUsed: number;
+  maxCreatedLinks: number | null;
+  createdLinksUsed: number;
+  maxRequests: number | null;
+  requestsUsed: number;
+}
+
+export interface APIKeyDTO {
+  apiKeyId: string;
+  name: string;
+  description: string;
+  keyPrefix: string;
+  businessId: string;
+  scopes: string[];
+  allowedIpCidrs: string[];
+  rateLimitPerMin: number;
+  status: APIKeyStatus;
+  allowAccountAccess: boolean;
+  quotas: APIKeyQuota;
+  maxUploadBytes?: number | null;
+  maxCreatedLinks?: number | null;
+  maxRequests?: number | null;
+  uploadedBytesUsed?: number;
+  createdLinksUsed?: number;
+  requestsUsed?: number;
+  expiresAt?: string | null;
+  lastUsedAt?: string | null;
+  lastUsedIp?: string | null;
+  revokedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateAPIKeyRequest {
+  name: string;
+  description?: string;
+  businessId: string;
+  scopes: string[];
+  allowedIpCidrs?: string[];
+  rateLimitPerMin?: number;
+  maxUploadBytes: number | null;
+  maxCreatedLinks: number | null;
+  maxRequests: number | null;
+  expiresAt: string | null;
+  allowAccountAccess: boolean;
+}
+
+export interface CreateAPIKeyResponse extends APIKeyDTO {
+  secretKey: string;
+}
+
+export interface UpdateAPIKeyRequest {
+  name?: string;
+  description?: string;
+  businessId?: string;
+  scopes?: string[];
+  allowedIpCidrs?: string[];
+  rateLimitPerMin?: number;
+  maxUploadBytes?: number | null;
+  maxCreatedLinks?: number | null;
+  maxRequests?: number | null;
+  expiresAt?: string | null;
+  allowAccountAccess?: boolean;
 }
