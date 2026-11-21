@@ -90,7 +90,13 @@ export async function request<T>(
     const msg = errPayload?.error?.message || `请求失败 (${res.status})`;
     const reqId = errPayload?.error?.requestId;
 
-    if (res.status === 401 && path !== "/auth/login") {
+    if (
+      res.status === 401 &&
+      path !== "/auth/login" &&
+      token &&
+      headers.get("Authorization") === `Bearer ${token}` &&
+      getStoredToken() === token
+    ) {
       setStoredToken(null);
       window.dispatchEvent(new CustomEvent("stub:unauthorized", { detail: msg }));
     }
