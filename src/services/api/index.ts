@@ -13,6 +13,8 @@ import type {
   CreateAPIKeyRequest,
   CreateAPIKeyResponse,
   CreateLinkRequest,
+  CreateGroupRequest,
+  GroupDTO,
   EmailCodeRequest,
   EmailCodeResponse,
   InviteCreateRequest,
@@ -20,6 +22,9 @@ import type {
   InviteDTO,
   LinkDTO,
   LinkListItem,
+  LinkListQuery,
+  UpdateLinkMetadataRequest,
+  UpdateLinkRulesRequest,
   LoginRequest,
   LoginResponse,
   PageResponse,
@@ -97,23 +102,34 @@ export const invitesApi = {
     ),
 };
 
+export const groupsApi = {
+  list: (params: { page?: number; pageSize?: number } = {}) =>
+    request<PageResponse<GroupDTO>>("/link-groups", { query: params }),
+
+  create: (body: CreateGroupRequest) =>
+    request<GroupDTO>("/link-groups", { method: "POST", body: JSON.stringify(body) }),
+};
+
 export const linksApi = {
   create: (body: CreateLinkRequest) =>
     request<LinkDTO>("/links", { method: "POST", body: JSON.stringify(body) }),
 
-  list: (params: {
-    page?: number;
-    pageSize?: number;
-    status?: string;
-    availability?: string;
-    workspaceId?: string;
-    targetType?: string;
-    code?: string;
-    createdFrom?: string;
-    createdTo?: string;
-  }) => request<PageResponse<LinkListItem>>("/links", { query: params }),
+  list: (params: LinkListQuery) =>
+    request<PageResponse<LinkListItem>>("/links", { query: { ...params } }),
 
   get: (linkId: string) => request<LinkDTO>(`/links/${encodeURIComponent(linkId)}`),
+
+  updateMetadata: (linkId: string, body: UpdateLinkMetadataRequest) =>
+    request<LinkDTO>(`/links/${encodeURIComponent(linkId)}/metadata`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  updateRules: (linkId: string, body: UpdateLinkRulesRequest) =>
+    request<LinkDTO>(`/links/${encodeURIComponent(linkId)}/rules`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
 
   renew: (linkId: string, body: RenewLinkRequest) =>
     request<RenewLinkResponse>(`/links/${encodeURIComponent(linkId)}/renew`, {

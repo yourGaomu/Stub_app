@@ -46,6 +46,8 @@ export function formatReasonLabel(reason?: string | null): string {
   const map: Record<string, string> = {
     allowed: "正常放行",
     expired: "已过期拦截",
+    not_started: "尚未开放拦截",
+    window_ended: "开放结束拦截",
     disabled: "已停用拦截",
     visit_limit_reached: "次数耗尽拦截",
     password_required: "要求输入口令",

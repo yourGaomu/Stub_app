@@ -200,10 +200,30 @@ export interface LinkTargetDTO {
   assetSizeBytes?: number;
 }
 
+export interface GroupDTO {
+  groupId: string;
+  workspaceId: string;
+  name: string;
+  description: string;
+  linkCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateGroupRequest {
+  name: string;
+  description?: string;
+}
+
 export interface CreateLinkRequest {
+  title?: string;
+  tags?: string[];
+  groupId?: string | null;
   code?: string;
   target: LinkTargetInput;
   expiresAt?: string | null;
+  activeFrom?: string | null;
+  activeUntil?: string | null;
   accessPassword?: string;
   ruleSource: {
     type: "inline" | "template";
@@ -214,13 +234,19 @@ export interface CreateLinkRequest {
 
 export interface LinkDTO {
   linkId: string;
+  title: string;
+  tags: string[];
+  groupId: string | null;
+  groupName: string | null;
   code: string;
   url: string;
   target: LinkTargetDTO;
   status: "enabled" | "disabled";
-  availability: "available" | "expired" | "visit_limit_reached" | "disabled";
+  availability: "available" | "expired" | "window_ended" | "not_started" | "visit_limit_reached" | "disabled";
   rules: LinkRules;
   expiresAt?: string | null;
+  activeFrom?: string | null;
+  activeUntil?: string | null;
   visitsUsed: number;
   ruleTemplate?: TemplateRef | null;
   createdAt: string;
@@ -229,16 +255,58 @@ export interface LinkDTO {
 
 export interface LinkListItem {
   linkId: string;
+  title: string;
+  tags: string[];
+  groupId: string | null;
+  groupName: string | null;
   code: string;
   url: string;
   targetType: "url" | "minio_asset";
+  targetUrl?: string;
+  assetId?: string;
   assetSizeBytes?: number;
   status: "enabled" | "disabled";
-  availability: "available" | "expired" | "visit_limit_reached" | "disabled";
+  availability: "available" | "expired" | "window_ended" | "not_started" | "visit_limit_reached" | "disabled";
   expiresAt?: string | null;
+  activeFrom?: string | null;
+  activeUntil?: string | null;
   visitsUsed: number;
   maxVisits: number;
   createdAt: string;
+}
+
+export type UpdateLinkMetadataRequest = (
+  | { title: string; tags: string[] }
+  | { title?: never; tags?: never }
+) & { groupId?: string | null };
+
+export type LinkListQuery = {
+  page?: number;
+  pageSize?: number;
+  status?: "enabled" | "disabled";
+  availability?: LinkDTO["availability"];
+  workspaceId?: string;
+  targetType?: "url" | "minio_asset";
+  code?: string;
+  keyword?: string;
+  assetId?: string;
+  maxVisits?: number;
+  createdFrom?: string;
+  createdTo?: string;
+} & (
+  | { groupId?: string; ungrouped?: never }
+  | { groupId?: never; ungrouped: true }
+);
+
+export interface UpdateLinkRulesRequest {
+  expiresAt?: string | null;
+  activeFrom?: string | null;
+  activeUntil?: string | null;
+  maxVisits?: number;
+  allowedIpCidrs?: string[];
+  requirePassword?: boolean;
+  accessPassword?: string;
+  wrongPasswordPolicy?: PasswordPolicy;
 }
 
 export interface RenewLinkRequest {
